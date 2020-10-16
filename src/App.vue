@@ -1,17 +1,37 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1 v-text="title"></h1>
+    <ul>
+      <li v-for='item in cartList' :key='item.id'>
+        <h2>
+          {{item.title}}
+        </h2>
+        <p>
+          ${{item.price}}
+        </p>
+      </li>
+    </ul>
+    <MyCart :cart='cartList' title='title' /> 
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MyCart from './components/Cart'
 
 export default {
   name: 'App',
+  data() {
+    return {
+      cartList:[
+        {id:1, title:"Vue开发", price:188, active:true, count:1},
+        {id:2, title:"React开发", price:288, active:true, count:1},
+      ],
+      title: "Shopping Cart"
+    };
+  },
   components: {
-    HelloWorld
+    MyCart
   }
 }
 </script>
