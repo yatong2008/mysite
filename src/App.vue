@@ -23,12 +23,17 @@ export default {
   name: 'App',
   data() {
     return {
-      cartList:[
-        {id:1, title:"Vue开发", price:188, active:true, count:1},
-        {id:2, title:"React开发", price:288, active:true, count:1},
-      ],
+      cartList:[],
       title: "Shopping Cart"
     };
+  },
+  async created() {
+    try {
+      const res = await this.$http.get('/api/cartList');
+      this.cartList = res.data.result;
+    } catch (error) {
+      console.log(error);
+    }
   },
   components: {
     MyCart
