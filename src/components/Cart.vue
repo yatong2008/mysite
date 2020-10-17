@@ -1,6 +1,49 @@
 <template>
   <div>
     <h2>{{ title }}</h2>
+
+    <el-table
+        ref="multipleTable"
+        :data="cart"
+        tooltip-effect="dark"
+        style="width: 100%"
+        border
+        @selection-change="handleSelectionChange">
+      <el-table-column
+          type="selection"
+          width="55">
+      </el-table-column>
+
+      <el-table-column
+          prop="title"
+          label="Course"
+          width="120">
+      </el-table-column>
+      <el-table-column
+          prop="price"
+          label="Price"
+          width="120">
+      </el-table-column>
+
+      <el-table-column
+          label="Title"
+          width="200">
+        <template slot-scope="scope">
+          <el-input-number v-model="scope.row.count" :min="1" :max="100"></el-input-number>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+          label="Total"
+          width="120">
+        <template slot-scope="scope">
+          {{scope.row.count * scope.row.price}}
+        </template>
+      </el-table-column>
+
+    </el-table>
+
+
     <table border="1">
       <tr>
         <th>#</th>
@@ -16,9 +59,9 @@
         <td>{{ c.title }}</td>
         <td>{{ c.price }}</td>
         <td>
-          <button @click="subtract(index)">-</button>
+          <el-button @click="subtract(index)">-</el-button>
           {{ c.count }}
-          <button @click="add(index)">+</button>
+          <el-button @click="add(index)">+</el-button>
         </td>
         <td>{{ c.price * c.count }}</td>
 
@@ -38,7 +81,8 @@ export default {
   props: ['title'],
   data() {
     return {
-      cart: JSON.parse(localStorage.getItem('cart')) || []
+      cart: JSON.parse(localStorage.getItem('cart')) || [],
+      multipleSelection:[]
     }
   },
   watch: {
@@ -77,6 +121,19 @@ export default {
     subtract(i) {
       let count = this.cart[i].count;
       count > 1 ? this.cart[i].count -= 1 : this.remove(i);
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
     }
   },
   computed: {
@@ -84,7 +141,9 @@ export default {
       return this.cart.length
     },
     activeCount() {
-      return this.cart.filter(v => v.active).length
+      // eslint-disable-next-line no-debugger
+      debugger
+      return this.multipleSelection.filter(v => v.active).length
     },
     total() {
       return this.cart.reduce((sum, c) => {
