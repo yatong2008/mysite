@@ -16,7 +16,7 @@
                 <td>{{c.title}}</td>
                 <td>{{c.price}}</td>
                 <td>
-                    <button @click="subsctract(index)">-</button>
+                    <button @click="subtract(index)">-</button>
                     {{c.count}}
                     <button @click="add(index)">+</button>
                 </td>                
@@ -35,8 +35,25 @@
 <script>
     export default {
         name: "cart",
-        props:['title', 'cart'],
-        methods: {
+        props:['title'],
+      data() {
+          return {
+            cart: []
+          }
+      },
+      created() {
+          this.$bus.$on('addCart', good=>{
+            const ret = this.cart.find(v=> v.id===good.id);
+            if(!ret) {
+              //cart does not contain the data
+              this.cart.push(good);
+            } else {
+
+              ret.count++;
+            }
+          });
+      },
+      methods: {
             remove(i) {
                 if(window.confirm('Are you sure?')) {
                     this.cart.splice(i,1);
@@ -45,7 +62,7 @@
             add(i) {
                 this.cart[i].count++;
             },
-            subsctract(i) {
+            subtract(i) {
                 let count = this.cart[i].count;
                 count > 1 ? this.cart[i].count -= 1 : this.remove(i);
             }
